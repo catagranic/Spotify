@@ -48,3 +48,12 @@ body {
 		border: none;
 	}
 }
+a {
+  color: #2ebd59;
+  text-decoration: none;
+  &:hover,&:focus,&:active {
+    color: lighten(#1db954, 10%);
+    text-decoration: none;
+    border: none;
+  }
+}

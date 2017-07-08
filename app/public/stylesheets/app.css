@@ -8179,6 +8179,14 @@ body {
     text-decoration: none;
     border: none; }
 
+a {
+  color: #2ebd59;
+  text-decoration: none; }
+  a:hover, a:focus, a:active {
+    color: #2bde6a;
+    text-decoration: none;
+    border: none; }
+
 #login, #loggedin {
   display: none; }
 
