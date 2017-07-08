@@ -8,17 +8,6 @@
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
     <link href="stylesheets/app.css" rel="stylesheet">
-    <style type="text/css">
-      #login, #loggedin {
-        display: none;
-      }
-      .text-overflow {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 500px;
-      }
-    </style>
   </head>
 
   <body>
@@ -33,28 +22,29 @@
         <div id="oauth">
         </div>
         <button class="btn btn-primary" id="obtain-new-token">Obtain new token using the refresh token</button>
-        <div class="contenedor-link"><a class="btn btn-primary" id="busca-artistas">Artistas más populares en Chile</a></div>
+        <div class="contenedor-link"><a class="btn btn-primary" id="busca-artistas">Las canciones más Chile</a></div>
       </div>
       <div id="busqueda-artistas">
         <div class="container">
           <div class="row">
             <div class="col-md-12">
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 col-md-offset-3">
+                  <h1>Las 50 canciones más populares en Chile <i class="fa fa-music" aria-hidden="true"></i></h1>
                   <form>
                     <fieldset>
-                      <legend>Look for an artist</legend>
-                      <input class="form-control" value="" placeholder="Write the artist to find...">
-                      <button class="btn btn-primary">search!</button>
+                      <legend>Busca un artista</legend>
+                      <input class="form-control" value="" placeholder="Escribe el nombre del artista...">
+                      <button class="btn btn-primary">Buscar</button>
                     </fieldset>
 
                     <fieldset>
-                      <legend>Select from the artists found</legend>
+                      <legend>Selecciona el artista</legend>
                       <select class="form-control" id="artists"></select>
                     </fieldset>
 
                     <fieldset>
-                      <legend>Select an album</legend>
+                      <legend>Elige un album</legend>
                       <select class="form-control" id="albums"></select>
                     </fieldset>
 
@@ -70,7 +60,7 @@
     </div>
 
     <script id="user-profile-template" type="text/x-handlebars-template">
-      <h1>Logged in as {{display_name}}</h1>
+      <h1>Ingresaste como {{display_name}}</h1>
       <div class="media">
         <div class="pull-left">
           <img class="media-object" width="150" src="{{images.0.url}}" />
