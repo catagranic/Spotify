@@ -1,7 +1,12 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Spotify</title>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
     <link href="stylesheets/app.css" rel="stylesheet">
     <style type="text/css">
       #login, #loggedin {
@@ -27,13 +32,45 @@
         </div>
         <div id="oauth">
         </div>
-        <!--button class="btn btn-primary" id="obtain-new-token">Obtain new token using the refresh token</button-->
-        <div class="contenedor-link"><a class="btn btn-primary" id="busca-artistas" href="app.html">Busca a los mejores artistas chilenos</a></div>
+        <button class="btn btn-primary" id="obtain-new-token">Obtain new token using the refresh token</button>
+        <div class="contenedor-link"><a class="btn btn-primary" id="busca-artistas">Artistas más populares en Chile</a></div>
+      </div>
+      <div id="busqueda-artistas">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-md-6">
+                  <form>
+                    <fieldset>
+                      <legend>Look for an artist</legend>
+                      <input class="form-control" value="" placeholder="Write the artist to find...">
+                      <button class="btn btn-primary">search!</button>
+                    </fieldset>
+
+                    <fieldset>
+                      <legend>Select from the artists found</legend>
+                      <select class="form-control" id="artists"></select>
+                    </fieldset>
+
+                    <fieldset>
+                      <legend>Select an album</legend>
+                      <select class="form-control" id="albums"></select>
+                    </fieldset>
+
+                  </form>
+
+                  <ul></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
     <script id="user-profile-template" type="text/x-handlebars-template">
-      <!--h1>Logged in as {{display_name}}</h1>
+      <h1>Logged in as {{display_name}}</h1>
       <div class="media">
         <div class="pull-left">
           <img class="media-object" width="150" src="{{images.0.url}}" />
@@ -49,7 +86,7 @@
             <dt>País</dt><dd>{{country}}</dd>
           </dl>
         </div>
-      </div-->
+      </div>
     </script>
 
     <script id="oauth-template" type="text/x-handlebars-template">
@@ -96,47 +133,181 @@
         if (error) {
           alert('There was an error during the authentication');
         } else {
-          if (access_token) {
-            // render oauth info
+        if (access_token) {
+          oauthPlaceholder.innerHTML = oauthTemplate({
+            access_token: access_token,
+            refresh_token: refresh_token
+          });
+
+          $.ajax({
+              url: 'https://api.spotify.com/v1/me',
+              headers: {
+                'Authorization': 'Bearer ' + access_token
+              },
+              success: function(response) {
+                userProfilePlaceholder.innerHTML = userProfileTemplate(response);
+
+                $('#login').hide();
+                $('#loggedin').show();
+              }
+          });
+
+          /********************
+          ********************
+          ********************
+          ********************/
+
+          var $esconderOauth = $('#busca-artistas');
+          var $button = $("form button");
+          var $artistsSelect = $("#artists");
+          var $albumsSelect = $("#albums");
+          var $tracksContainer = $("ul");
+
+          /* @begin event button-click to get artists from spotify */
+
+          $esconderOauth.on("click", function(e) {
+
+            e.preventDefault();
+            $('#loggedin').hide();
+            $('#busqueda-artistas').show();
+
+          });
+
+
+          $button.on("click", function(e) {
+
+            e.preventDefault();
+
+            var $input = $("form input");
+            var sArtistToFind = $input.val();
+            var sGetArtistsUrl = "https://api.spotify.com/v1/search?type=artist&query=" + sArtistToFind
+
+            $.ajax({
+              url: sGetArtistsUrl,
+              dataType: "json",
+              headers: {
+                'Authorization': 'Bearer ' + access_token
+              },
+              success: function( oDataReceived ) {
+
+                var aArtists = oDataReceived.artists.items;
+                var oCurrentArtist;
+                var sOptions = "<option>Please select your artist...</option>";
+
+                $.each( aArtists, function( index, value ) {
+                  oCurrentArtist = value;
+                  sOptions += "<option value='" + oCurrentArtist.id + "'>" + oCurrentArtist.name + "</option>"
+                });
+
+                $artistsSelect.html(sOptions);
+
+              }
+            })
+          })
+          /* @end event button-click to get artists from spotify  */
+
+
+
+
+          /* @begin event get albums when artist is selected */
+          $artistsSelect.on("change", function(e) {
+
+            var $optionSelected = $(this).find("option:selected");
+            var sIdArtist = $optionSelected.val();
+
+            var sGetAlbumsUrl = "https://api.spotify.com/v1/artists/" + sIdArtist + "/albums";
+
+            $.ajax({
+              url: sGetAlbumsUrl,
+              dataType: "json",
+              headers: {
+                'Authorization': 'Bearer ' + access_token
+              },
+              success: function( oDataReceived ) {
+
+                var aAlbums = oDataReceived.items;
+                var oCurrentAlbum;
+                var sOptions = "<option>Please select your album...</option>";
+
+                $.each( aAlbums, function( index, value ) {
+                  oCurrentAlbum = value;
+                  sOptions += "<option value='" + oCurrentAlbum.id + "'>" + oCurrentAlbum.name + "</option>"
+                })
+                $albumsSelect.html(sOptions);
+              }
+
+            });
+
+          });
+          /* @end event get albums when artist is selected */
+
+
+          /* @begin event get tracks when album is selected */
+          $albumsSelect.on("change", function(e) {
+
+            var $optionSelected = $(this).find("option:selected");
+            var sIdAlbum = $optionSelected.val();
+
+            var sGetTracksUrl = "https://api.spotify.com/v1/albums/" + sIdAlbum + "/tracks";
+
+            $.ajax({
+              url: sGetTracksUrl,
+              dataType: "json",
+              headers: {
+                'Authorization': 'Bearer ' + access_token
+              },
+              success: function( oDataReceived ) {
+                var aTracks = oDataReceived.items;
+                var oCurrentTrack;
+                var sItems = "";
+
+                $.each( aTracks, function( index, value ) {
+                  oCurrentTrack = value;
+                  console.log (oCurrentTrack);
+                  sItems += "<li><a target='_blank' href='" + oCurrentTrack.preview_url+ "'>"+ oCurrentTrack.name + "</a></li>"
+                });
+
+                $tracksContainer.html(sItems)
+              }
+            });
+
+          });
+
+          /* @end event get tracks when album is selected */
+
+          /********************
+          ********************
+          ********************
+          ********************/
+
+        } else {
+
+            $('#login').show();
+            $('#loggedin').hide();
+        }
+
+        document.getElementById('obtain-new-token').addEventListener('click', function() {
+          $.ajax({
+            url: '/refresh_token',
+            data: {
+              'refresh_token': refresh_token
+            }
+          }).done(function(data) {
+            access_token = data.access_token;
             oauthPlaceholder.innerHTML = oauthTemplate({
               access_token: access_token,
               refresh_token: refresh_token
             });
+          });
+        }, false);
 
-            $.ajax({
-                url: 'https://api.spotify.com/v1/me',
-                headers: {
-                  'Authorization': 'Bearer ' + access_token
-                },
-                success: function(response) {
-                  userProfilePlaceholder.innerHTML = userProfileTemplate(response);
 
-                  $('#login').hide();
-                  $('#loggedin').show();
-                }
-            });
-          } else {
-              // render initial screen
-              $('#login').show();
-              $('#loggedin').hide();
-          }
 
-          document.getElementById('obtain-new-token').addEventListener('click', function() {
-            $.ajax({
-              url: '/refresh_token',
-              data: {
-                'refresh_token': refresh_token
-              }
-            }).done(function(data) {
-              access_token = data.access_token;
-              oauthPlaceholder.innerHTML = oauthTemplate({
-                access_token: access_token,
-                refresh_token: refresh_token
-              });
-            });
-          }, false);
+
         }
       })();
+
+
     </script>
   </body>
 </html>

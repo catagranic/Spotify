@@ -1,5 +1,4 @@
-#login,
-.contenedor-link {
+#login {
 	width: 50%;
   height: 50%;
   overflow: auto;
@@ -8,6 +7,14 @@
   top: 0; left: 0; bottom: 0; right: 0;
   text-align: center;
 }
-#oauth {
+form {
+	color: white;
+	> fieldset {
+		> legend {
+			color: white;
+		}
+	}
+}
+#busqueda-artistas {
 	display: none;
 }

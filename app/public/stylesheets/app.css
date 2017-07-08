@@ -5853,8 +5853,7 @@ body {
     text-decoration: none;
     border: none; }
 
-#login,
-.contenedor-link {
+#login {
   width: 50%;
   height: 50%;
   overflow: auto;
@@ -5866,7 +5865,12 @@ body {
   right: 0;
   text-align: center; }
 
-#oauth {
+form {
+  color: white; }
+  form > fieldset > legend {
+    color: white; }
+
+#busqueda-artistas {
   display: none; }
 
 /*# sourceMappingURL=app.css.map */

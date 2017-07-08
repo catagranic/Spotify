@@ -2,7 +2,7 @@
 
 Una vez clonado el repositorio, bajar dependencias con:
 
-		$ npm install
+    $ npm install
 
 ## Ejemplo
 Para hacer funcionar la aplicación, ve a la carpeta `app`
