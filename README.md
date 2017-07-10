@@ -10,4 +10,4 @@ Para hacer funcionar la aplicación, ve a la carpeta `app`
     $ cd app
     $ node app.js
 
-Luego, abre `http://localhost:8888` en el navegador.
+Luego, abre `http://localhost:8080` en el navegador.
