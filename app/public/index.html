@@ -11,6 +11,14 @@
   </head>
 
   <body>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_PI/sdk.js#xfbml=1&version=v2.9&appId=250984638594382";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
     <div class="container">
       <div id="login">
         <h1>Accede a Spotify</h1>
@@ -40,15 +48,22 @@
         </div>
       </div>
     </div>
-    <div id="modalTrack" class="modal fade" role="dialog" data-track="">
+    <div id="modalTrack" class="modal fade" role="dialog">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Artista Destacado</h4>
+            <ul class="list-inline">
+              <li><a id="facebook" href=""><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+              <li><a id="twitter" href=""><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+              <li><a id="googleplus" href=""><i class="fa fa-google-plus" aria-hidden="true"></i></a></li>
+            </ul>
+            <h4 class="modal-title"></h4>
           </div>
           <div class="modal-body">
-            <p></p>
+            <h1 id="track"></h1>
+            <img id="cover" src="" class="img-responsive">
+            <a id="song" href="" target="_blank"></a>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
@@ -165,7 +180,7 @@
                 var liItems = "";
 
                 $.each( tracks, function( index, value ) {
-                  liItems += '<a href="#" data-toggle="modal" data-target="#modalTrack" data-track="' + value.track.name + '" data-artist="' + value.track.artists[0].name + '" data-image="' + value.track.images + '"><li>'+ value.track.artists[0].name + " - " + value.track.name + '</li></a>';
+                  liItems += '<a class="link-artist" href="#" data-toggle="modal" data-target="#modalTrack" data-track="' + value.track.name + '" data-artist="' + value.track.artists[0].name + '" data-img="' + value.track.album.images[0].url + '" data-song="' + value.track.preview_url +'"><li>'+ value.track.artists[0].name + " - " + value.track.name + '</li></a>';
                 });
 
                 $tracksUl.html(liItems)
@@ -173,10 +188,16 @@
               }
             })
 
-            $('#modalTrack').on('show.bs.modal', function(e) {
-              var dataTrack = $(this).data('track');
-              console.log(dataTrack)
-              $(this).data(dataTrack);
+            $(document).on('click', '.link-artist', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              var el = $(this);
+              $('#track').text(el.data('artist')+' - '+el.data('track'));
+              $('#cover').attr('src', el.data('img'));
+              $('#song').attr('href', el.data('song')).text(el.data('artist')+' - '+el.data('track'));
+              $('#facebook').attr('href', 'https://www.facebook.com/sharer/sharer.php?u=' + el.data('song'));
+              $('#twitter').attr('href', 'https://twitter.com/home?status=' + el.data('song'));
+              $('#googleplus').attr('href', 'https://plus.google.com/share?url=' + el.data('song'));
             });
 
           });

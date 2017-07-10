@@ -46,5 +46,17 @@ ul#tracksUl {
 			font-weight: 600;
 			text-transform: uppercase;
 		}
+		#song {
+			margin-top: 10px;
+	    display: inline-block;
+	    font-weight: 600;
+	    text-transform: uppercase;
+	    position: relative;
+	    &:before {
+	    	content: "\f04b";
+	    	padding-right: 15px;
+	    	font: normal normal normal 14px/1 FontAwesome;
+	    }
+		}
 	}
 }
