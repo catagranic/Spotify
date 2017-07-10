@@ -21,8 +21,8 @@
         </div>
         <div id="oauth">
         </div>
+        <button id="topCincuenta" class="btn btn-primary">Las canciones más populares en Chile</button></div>
         <button class="btn btn-primary" id="obtain-new-token">Obtain new token using the refresh token</button>
-        <div class="contenedor-link"><a class="btn btn-primary" id="busca-artistas">Las canciones más poulares en Chile</a></div>
       </div>
       <div id="busqueda-artistas">
         <div class="container">
@@ -31,30 +31,27 @@
               <div class="row">
                 <div class="col-md-6 col-md-offset-3">
                   <h1>Las 50 canciones más populares en Chile <i class="fa fa-music" aria-hidden="true"></i></h1>
-                  <form>
-                    <fieldset>
-                      <legend>Busca un artista</legend>
-                      <input class="form-control" value="" placeholder="Escribe el nombre del artista...">
-                      <button class="btn btn-primary">Buscar</button>
-                    </fieldset>
-
-                    <fieldset>
-                      <legend>Selecciona el artista</legend>
-                      <select class="form-control" id="artists"></select>
-                    </fieldset>
-
-                    <fieldset>
-                      <legend>Elige un album</legend>
-                      <select class="form-control" id="albums"></select>
-                    </fieldset>
-
-                  </form>
-                  <button id="topCincuenta">50 Artistas</button>
-
-                  <ul></ul>
+                  <hr>
+                  <ul id="tracksUl"></ul>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="modalTrack" class="modal fade" role="dialog" data-track="">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Artista Destacado</h4>
+          </div>
+          <div class="modal-body">
+            <p></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
           </div>
         </div>
       </div>
@@ -90,13 +87,10 @@
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script type="text/javascript" src="javascripts/bootstrap.min.js"></script>
     <script>
       (function() {
 
-        /**
-         * Obtains parameters from the hash of the URL
-         * @return Object
-         */
         function getHashParams() {
           var hashParams = {};
           var e, r = /([^&;=]+)=?([^&;]*)/g,
@@ -148,146 +142,44 @@
           ********************
           ********************/
 
-          var $esconderOauth = $('#busca-artistas');
           var $button = $("form button");
           var $artistsSelect = $("#artists");
           var $albumsSelect = $("#albums");
           var $tracksContainer = $("ul");
+          var $tracksUl = $("#tracksUl")
           var $topCincuenta = $("#topCincuenta");
 
-          /* @begin event button-click to get artists from spotify */
-
-          $esconderOauth.on("click", function(e) {
-
+          $topCincuenta.on("click", function(e) {
             e.preventDefault();
             $('#loggedin').hide();
             $('#busqueda-artistas').show();
-
-          });
-
-
-          $button.on("click", function(e) {
-
-            e.preventDefault();
-
-            var $input = $("form input");
-            var sArtistToFind = $input.val();
-            var sGetArtistsUrl = "https://api.spotify.com/v1/search?type=track&market=US&query=" + sArtistToFind
-
             $.ajax({
-              url: sGetArtistsUrl,
+              url: "https://api.spotify.com/v1/users/spotify/playlists/37i9dQZF1DXclgCwbk0uat/tracks?offset=0&limit=50&market=CL",
               dataType: "json",
               headers: {
                 'Authorization': 'Bearer ' + access_token
               },
-              success: function( oDataReceived ) {
+              success: function( response ) {
 
-                var aArtists = oDataReceived.artists.items;
-                var oCurrentArtist;
-                var sOptions = "<option>Please select your artist...</option>";
+                var tracks = response.items;
+                var liItems = "";
 
-                $.each( aArtists, function( index, value ) {
-                  oCurrentArtist = value;
-                  sOptions += "<option value='" + oCurrentArtist.id + "'>" + oCurrentArtist.name + "</option>"
+                $.each( tracks, function( index, value ) {
+                  liItems += '<a href="#" data-toggle="modal" data-target="#modalTrack" data-track="' + value.track.name + '"><li>'+ value.track.artists[0].name + " - " + value.track.name + '</li></a>';
                 });
 
-                $artistsSelect.html(sOptions);
+                $tracksUl.html(liItems)
 
               }
             })
-          })
-          /* @end event button-click to get artists from spotify  */
 
-
-          /* @begin event get albums when artist is selected */
-          $artistsSelect.on("change", function(e) {
-
-            var $optionSelected = $(this).find("option:selected");
-            var sIdArtist = $optionSelected.val();
-
-            var sGetAlbumsUrl = "https://api.spotify.com/v1/artists/" + sIdArtist + "/albums";
-
-            $.ajax({
-              url: sGetAlbumsUrl,
-              dataType: "json",
-              headers: {
-                'Authorization': 'Bearer ' + access_token
-              },
-              success: function( oDataReceived ) {
-
-                var aAlbums = oDataReceived.items;
-                var oCurrentAlbum;
-                var sOptions = "<option>Please select your album...</option>";
-
-                $.each( aAlbums, function( index, value ) {
-                  oCurrentAlbum = value;
-                  sOptions += "<option value='" + oCurrentAlbum.id + "'>" + oCurrentAlbum.name + "</option>"
-                })
-                $albumsSelect.html(sOptions);
-              }
-
-            });
-
-          });
-          /* @end event get albums when artist is selected */
-
-
-          /* @begin event get tracks when album is selected */
-          $albumsSelect.on("change", function(e) {
-
-            var $optionSelected = $(this).find("option:selected");
-            var sIdAlbum = $optionSelected.val();
-
-            var sGetTracksUrl = "https://api.spotify.com/v1/albums/" + sIdAlbum + "/tracks";
-
-            $.ajax({
-              url: sGetTracksUrl,
-              dataType: "json",
-              headers: {
-                'Authorization': 'Bearer ' + access_token
-              },
-              success: function( oDataReceived ) {
-                var aTracks = oDataReceived.items;
-                var oCurrentTrack;
-                var sItems = "";
-
-                $.each( aTracks, function( index, value ) {
-                  oCurrentTrack = value;
-                  console.log (oCurrentTrack);
-                  sItems += "<li><a target='_blank' href='" + oCurrentTrack.preview_url+ "'>"+ oCurrentTrack.name + "</a></li>"
-                });
-
-                $tracksContainer.html(sItems)
-              }
+            $('#modalTrack').on('show.bs.modal', function(e) {
+              var dataTrack = $(this).data('track');
+              $(this).data(dataTrack);
             });
 
           });
 
-          $topCincuenta.on("change", function(e) {
-            var mejoresCincuenta = "https://api.spotify.com/v1/users/spotifycharts/playlists/37i9dQZEVXbJs8e2vk15a8/tracks";
-
-            $.ajax({
-              url: mejoresCincuenta;
-              dataType: "json",
-              headers: {
-                'Authorization': 'Bearer ' + access_token
-              },
-              success: function( oDataReceived ) {
-                var aTracks = oDataReceived.items;
-                var oCurrentTrack;
-                var sItems = "";
-
-                $.each( aTracks, function (index,value)) {
-                  console.log (oCurrentTrack);
-                  sItems += "<li><a target='_blank' href='" + '#' + "'>"+ oCurrentTrack.name + "</a></li>"
-                }
-              }
-            });
-          });
-
-
-
-          /* @end event get tracks when album is selected */
 
           /********************
           ********************

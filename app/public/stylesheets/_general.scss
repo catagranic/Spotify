@@ -35,3 +35,16 @@ form {
 #obtain-new-token {
 	visibility: hidden;
 }
+ul#tracksUl {
+	padding-left: 10px;
+}
+#modalTrack {
+	.modal-content {
+		background-color: #191414;
+		color: white;
+		h4.modal-title {
+			font-weight: 600;
+			text-transform: uppercase;
+		}
+	}
+}

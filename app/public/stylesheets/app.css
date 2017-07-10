@@ -8187,6 +8187,10 @@ a {
     text-decoration: none;
     border: none; }
 
+.close {
+  color: white;
+  opacity: 0.8; }
+
 #login, #loggedin {
   display: none; }
 
@@ -8222,5 +8226,15 @@ form {
 
 #obtain-new-token {
   visibility: hidden; }
+
+ul#tracksUl {
+  padding-left: 10px; }
+
+#modalTrack .modal-content {
+  background-color: #191414;
+  color: white; }
+  #modalTrack .modal-content h4.modal-title {
+    font-weight: 600;
+    text-transform: uppercase; }
 
 /*# sourceMappingURL=app.css.map */
