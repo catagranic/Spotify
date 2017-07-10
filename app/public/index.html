@@ -165,7 +165,7 @@
                 var liItems = "";
 
                 $.each( tracks, function( index, value ) {
-                  liItems += '<a href="#" data-toggle="modal" data-target="#modalTrack" data-track="' + value.track.name + '"><li>'+ value.track.artists[0].name + " - " + value.track.name + '</li></a>';
+                  liItems += '<a href="#" data-toggle="modal" data-target="#modalTrack" data-track="' + value.track.name + '" data-artist="' + value.track.artists[0].name + '" data-image="' + value.track.images + '"><li>'+ value.track.artists[0].name + " - " + value.track.name + '</li></a>';
                 });
 
                 $tracksUl.html(liItems)
@@ -175,6 +175,7 @@
 
             $('#modalTrack').on('show.bs.modal', function(e) {
               var dataTrack = $(this).data('track');
+              console.log(dataTrack)
               $(this).data(dataTrack);
             });
 
