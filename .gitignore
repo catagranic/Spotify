@@ -6,7 +6,4 @@ node_modules/
 .Trashes
 ehthumbs.db
 Thumbs.db
-app/public/stylesheets/.sass-cache/
-app/public/stylesheets/bootstrap/_*
-app/public/stylesheets/font-awesome/_*
-app/public/stylesheets/_*
+**/_*
