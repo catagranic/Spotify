@@ -11,14 +11,6 @@
   </head>
 
   <body>
-    <div id="fb-root"></div>
-    <script>(function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s); js.id = id;
-      js.src = "//connect.facebook.net/en_PI/sdk.js#xfbml=1&version=v2.9&appId=250984638594382";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));</script>
     <div class="container">
       <div id="login">
         <h1>Accede a Spotify</h1>
@@ -38,9 +30,19 @@
             <div class="col-md-12">
               <div class="row">
                 <div class="col-md-6 col-md-offset-3">
-                  <h1>Las 50 canciones más populares en Chile <i class="fa fa-music" aria-hidden="true"></i></h1>
+                  <h1>Las 50 canciones + escuchadas en Chile <i class="fa fa-music" aria-hidden="true"></i></h1>
                   <hr>
-                  <ul id="tracksUl"></ul>
+                  <div id="custom-search-input">
+                    <div class="input-group col-md-12">
+                      <input type="text" class="form-control input-md" placeholder="Buscar" onkeyup="filter(this,'theList')"/>
+                      <span class="input-group-btn">
+                        <button class="btn btn-info btn-md" type="button">
+                          <i class="glyphicon glyphicon-search"></i>
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+                  <ol id="tracksUl"></ol>
                 </div>
               </div>
             </div>
@@ -53,17 +55,18 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <ul class="list-inline">
-              <li><a id="facebook" href=""><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
-              <li><a id="twitter" href=""><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
-              <li><a id="googleplus" href=""><i class="fa fa-google-plus" aria-hidden="true"></i></a></li>
-            </ul>
+            <a id="song" href="" target="_blank"></a>
             <h4 class="modal-title"></h4>
           </div>
           <div class="modal-body">
             <h1 id="track"></h1>
             <img id="cover" src="" class="img-responsive">
-            <a id="song" href="" target="_blank"></a>
+            <ul class="list-inline">
+              <li>Comparte:</li>
+              <li><a id="facebook" href="" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+              <li><a id="twitter" href="" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+              <li><a id="googleplus" href="" target="_blank"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li>
+            </ul>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
@@ -104,6 +107,20 @@
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script type="text/javascript" src="javascripts/bootstrap.min.js"></script>
     <script>
+      function filter(element) {
+        var value = $(element).val();
+        value = value.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+          return letter.toUpperCase();
+        });
+        $("#tracksUl > li").each(function() {
+            if ($(this).text().search(value) > -1) {
+                $(this).show();
+            }
+            else {
+                $(this).hide();
+            }
+        });
+      }
       (function() {
 
         function getHashParams() {
@@ -152,10 +169,7 @@
               }
           });
 
-          /********************
-          ********************
-          ********************
-          ********************/
+          /* API */
 
           var $button = $("form button");
           var $artistsSelect = $("#artists");
@@ -180,7 +194,7 @@
                 var liItems = "";
 
                 $.each( tracks, function( index, value ) {
-                  liItems += '<a class="link-artist" href="#" data-toggle="modal" data-target="#modalTrack" data-track="' + value.track.name + '" data-artist="' + value.track.artists[0].name + '" data-img="' + value.track.album.images[0].url + '" data-song="' + value.track.preview_url +'"><li>'+ value.track.artists[0].name + " - " + value.track.name + '</li></a>';
+                  liItems += '<li><a class="link-artist" href="#" data-toggle="modal" data-target="#modalTrack" data-track="' + value.track.name + '" data-artist="' + value.track.artists[0].name + '" data-img="' + value.track.album.images[0].url + '" data-song="' + value.track.preview_url +'">'+ value.track.artists[0].name + " - " + value.track.name + '</a></li>';
                 });
 
                 $tracksUl.html(liItems)

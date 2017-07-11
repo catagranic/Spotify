@@ -1,2 +1,6 @@
 node_modules/
-DS_Store
+.DS_Store
+stylesheets/.sass-cache/
+stylesheets/bootstrap/_*
+stylesheets/font-awesome/_*
+stylesheets/_*
