@@ -1,6 +1,12 @@
 node_modules/
 .DS_Store
-stylesheets/.sass-cache/
-stylesheets/bootstrap/_*
-stylesheets/font-awesome/_*
-stylesheets/_*
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+app/public/stylesheets/.sass-cache/
+app/public/stylesheets/bootstrap/_*
+app/public/stylesheets/font-awesome/_*
+app/public/stylesheets/_*
